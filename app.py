@@ -6,12 +6,10 @@ from langchain.prompts import PromptTemplate
 import subprocess
 import yaml
 
-# --------------- CONFIG --------------------
 TEMPLATE_PATH = "prompts/kube_template.txt"
 OUTPUT_DIR = "output"
 OUTPUT_FILE = os.path.join(OUTPUT_DIR, "deployment.yaml")
 
-# ------------- PROMPT NORMALIZATION ---------
 def normalize_prompt(user_prompt: str) -> str:
     prompt = user_prompt.lower()
     replacements = {
@@ -38,7 +36,6 @@ def normalize_prompt(user_prompt: str) -> str:
         prompt = prompt.replace(wrong, correct)
     return prompt
 
-# ------------- YAML GENERATION -------------
 def generate_yaml(user_prompt: str) -> str:
     with open(TEMPLATE_PATH, "r") as file:
         template = file.read()
@@ -48,7 +45,6 @@ def generate_yaml(user_prompt: str) -> str:
     try:
         response = llm.invoke(formatted_prompt)
 
-        # ✅ Clean triple backtick markdown if present
         if "```yaml" in response:
             response = response.split("```yaml", 1)[1].strip()
         if "```" in response:
@@ -63,9 +59,9 @@ def generate_yaml(user_prompt: str) -> str:
 
 # ----------- STREAMLIT UI ------------------
 st.set_page_config(page_title="K8s YAML GenAI", layout="centered")
-st.title("🧠 Kubernetes YAML Generator (with Mistral GenAI)")
+st.title("Kubernetes YAML Generator (with Mistral GenAI)")
 
-st.markdown("⚙️ Enter a natural language prompt like:")
+st.markdown("Enter a natural language prompt like:")
 st.code("start a flak api with 3 pods on port 5050")
 st.code("autoscale a ndoejs app to scale up on port 3035")
 
@@ -76,36 +72,27 @@ sample_prompts = [
     "Create deployment and service for a Go app on 9000 with autoscaling from 1 to 4 replicas and CPU trigger at 60%",
 ]
 
-selected_prompt = st.selectbox("📎 Try a sample prompt:", [""] + sample_prompts)
+selected_prompt = st.selectbox("Try a sample prompt:", [""] + sample_prompts)
 
-user_input = st.text_area("✍️ Or write your own prompt:", value=selected_prompt if selected_prompt else "", height=100)
+user_input = st.text_area("Or write your own prompt:", value=selected_prompt if selected_prompt else "", height=100)
 
-if st.button("🚀 Generate YAML"):
+if st.button("Generate YAML"):
     with st.spinner("Generating Kubernetes YAML..."):
         start_time = time.time()
         result = generate_yaml(user_input)
         elapsed = time.time() - start_time
 
-    st.success(f"✅ YAML generated in {elapsed:.2f} seconds")
+    st.success(f"YAML generated in {elapsed:.2f} seconds")
     st.code(result, language="yaml")
 
-# Show download button only if YAML exists
 if os.path.exists(OUTPUT_FILE):
     with open(OUTPUT_FILE, "rb") as file:
-        st.download_button("⬇️ Download deployment.yaml", file, file_name="deployment.yaml", mime="text/yaml")
+        st.download_button("⬇Download deployment.yaml", file, file_name="deployment.yaml", mime="text/yaml")
 
-# Validate YAML before allowing deployment
-#try:
-    #with open(OUTPUT_FILE, "r") as f:
-        #yaml.safe_load(f)
-#except Exception as e:
-    #st.error("⚠️ YAML is invalid. Fix issues before deploying.")
-    #st.code(str(e))
-    #st.stop()
 
 st.markdown("---")
 
-if st.button("🚀 Deploy to Kubernetes"):
+if st.button("Deploy to Kubernetes"):
     try:
         result = subprocess.run(
             ["kubectl", "apply", "-f", OUTPUT_FILE],
@@ -113,10 +100,10 @@ if st.button("🚀 Deploy to Kubernetes"):
             text=True
         )
         if result.returncode == 0:
-            st.success("✅ YAML successfully applied to your cluster!")
+            st.success("YAML successfully applied to your cluster!")
             st.code(result.stdout)
         else:
-            st.error("❌ Failed to apply YAML. See error below:")
+            st.error(" Failed to apply YAML. See error below:")
             st.code(result.stderr)
     except Exception as e:
-        st.error(f"🚨 Error running kubectl: {str(e)}")
+        st.error(f" Error running kubectl: {str(e)}")
