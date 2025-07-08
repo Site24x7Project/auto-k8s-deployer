@@ -19,6 +19,9 @@ def normalize_prompt(user_prompt: str) -> str:
         "scale down": "scale from 5 to 2 replicas",
         "start": "deploy",
         "launch": "deploy",
+        "run": "deploy",
+        "create": "deploy",
+        "build": "deploy",
         "hpa": "HorizontalPodAutoscaler",
         "autoscale": "add a HorizontalPodAutoscaler",
         "autoscaling": "add a HorizontalPodAutoscaler",
@@ -27,6 +30,8 @@ def normalize_prompt(user_prompt: str) -> str:
         "autoscaling from 2 to 5 replicas": "add a HorizontalPodAutoscaler to scale between 2 and 5 replicas",
         "cpu trigger at 60%": "based on 60% CPU usage",
         "trigger at 60% cpu": "based on 60% CPU usage",
+        "port fifty": "port 50",
+        "fifty": "50",
         "flak": "flask",
         "flsk": "flask",
         "ndoe": "node",
@@ -45,10 +50,20 @@ def generate_yaml(user_prompt: str) -> str:
     try:
         response = llm.invoke(formatted_prompt)
 
+        # Clean triple backtick markdown
         if "```yaml" in response:
             response = response.split("```yaml", 1)[1].strip()
         if "```" in response:
             response = response.split("```", 1)[0].strip()
+
+        # 🔧 Fix any placeholder tokens from LLM (fallback cleanup)
+        response = response.replace("<port_number>", "8080")
+        response = response.replace("<containerPort>", "8080")
+        response = response.replace("<container_port>", "8080")
+        response = response.replace("<expose_port>", "8080")
+        response = response.replace("<exposed_port>", "8080")
+        response = response.replace("<your_exposed_port>", "8080")
+
 
         os.makedirs(OUTPUT_DIR, exist_ok=True)
         with open(OUTPUT_FILE, "w") as f:
@@ -88,7 +103,6 @@ if st.button("Generate YAML"):
 if os.path.exists(OUTPUT_FILE):
     with open(OUTPUT_FILE, "rb") as file:
         st.download_button("⬇Download deployment.yaml", file, file_name="deployment.yaml", mime="text/yaml")
-
 
 st.markdown("---")
 
