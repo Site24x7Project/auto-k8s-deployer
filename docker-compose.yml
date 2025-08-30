@@ -1,0 +1,15 @@
+services:
+  app:
+    build: .
+    container_name: genkube-app
+    ports:
+      - "8501:8501"
+    environment:
+      OLLAMA_HOST: "http://host.docker.internal:11434"
+      MODEL_NAME: "mistral"
+      KUBECONFIG: "/tmp/kubeconfig"
+    volumes:
+      - ./kubeconfig.container:/tmp/kubeconfig:ro
+      - ./output:/app/output
+    extra_hosts:
+      - "host.docker.internal:host-gateway"

@@ -1,0 +1,68 @@
+# ---- Python bytecode / build
+__pycache__/
+*.py[cod]
+*$py.class
+build/
+dist/
+.eggs/
+*.egg-info/
+pip-wheel-metadata/
+
+# ---- Virtual environments
+.venv/
+venv/
+env/
+ENV/
+.env/
+.conda/
+venv.bak/
+env.bak/
+
+# ---- Tests / coverage
+.pytest_cache/
+.coverage
+.coverage.*
+htmlcov/
+.tox/
+.nox/
+.cache/
+
+# ---- Type & lint caches
+.mypy_cache/
+.ruff_cache/
+.pytype/
+.pyre/
+
+# ---- Streamlit / app runtime
+.streamlit/
+
+# ---- App-generated artifacts
+output/
+output/*.log
+deployment.yaml
+
+# ---- Kubernetes / kubeconfig (local-only)
+kubeconfig.minikube
+kubeconfig.container
+kubeconfig.*
+
+# ---- Local config / secrets
+.env
+.env.*
+*.local.json
+*.secret.*
+*.key
+*.pem
+secrets*.yaml
+
+# ---- Editors / OS
+.vscode/
+.idea/
+*.swp
+*.swo
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# ---- Docker (local overrides)
+docker-compose.override.yml

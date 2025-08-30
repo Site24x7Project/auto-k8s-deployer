@@ -1,0 +1,9 @@
+venv/
+.venv/
+env/
+__pycache__/
+.pytest_cache/
+.vscode/
+.DS_Store
+output/deployment.yaml
+.git
