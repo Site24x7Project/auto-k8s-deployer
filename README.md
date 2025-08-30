@@ -1,6 +1,6 @@
 # GenAI‑Powered Kubernetes YAML Generator
 
-![CI](https://github.com/Site24x7Project/kube-genai/actions/workflows/ci.yml/badge.svg)
+![CI](https://github.com/Site24x7Project/auto-k8s-deployer/actions/workflows/ci.yml/badge.svg)
 
 Turns natural‑language app specs into **valid Kubernetes manifests** and lets you **deploy with one click** to Minikube. Built with **Mistral (Ollama) + LangChain + Streamlit** and hardened by deterministic post‑processing and tests.
 
